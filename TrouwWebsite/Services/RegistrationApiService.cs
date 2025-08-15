@@ -11,9 +11,8 @@ namespace TrouwWebsite.Services
         public RegistrationApiService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            // Voor lokaal testen
-            _baseUrl = "http://localhost:7071/api";
-            // Later voor productie: configuration.GetValue<string>("ApiBaseUrl");
+            _baseUrl = configuration.GetValue<string>("ApiBaseUrl")
+                ?? "https://trouw-functions-1755253825.azurewebsites.net/api";
         }
 
         public async Task<Registration> CreateRegistrationAsync(Registration registration)
