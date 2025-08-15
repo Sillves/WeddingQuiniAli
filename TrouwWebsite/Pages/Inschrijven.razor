@@ -1,0 +1,84 @@
+@page "/inschrijven"
+@using TrouwWebsite.Models
+@using TrouwWebsite.Services
+@inject RegistrationApiService ApiService
+
+<h3>Inschrijving Trouw [Namen] - [Datum]</h3>
+
+@if (isSubmitted)
+{
+    <div class="alert alert-success">
+        <h4>Bedankt voor je inschrijving!</h4>
+        <p>We hebben je aanmelding ontvangen.</p>
+    </div>
+}
+else
+{
+    <EditForm Model="@registration" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group mb-3">
+            <label>Naam:</label>
+            <InputText @bind-Value="registration.Naam" class="form-control" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Email:</label>
+            <InputText @bind-Value="registration.Email" class="form-control" />
+        </div>
+
+        <h5>Waar ben je bij aanwezig?</h5>
+
+        <div class="form-check mb-2">
+            <InputCheckbox @bind-Value="registration.Trouwceremonie" class="form-check-input" />
+            <label class="form-check-label">Trouwceremonie (14:00)</label>
+        </div>
+
+        <div class="form-check mb-2">
+            <InputCheckbox @bind-Value="registration.Receptie" class="form-check-input" />
+            <label class="form-check-label">Receptie (15:30)</label>
+        </div>
+
+        <div class="form-check mb-2">
+            <InputCheckbox @bind-Value="registration.Diner" class="form-check-input" />
+            <label class="form-check-label">Diner (18:00)</label>
+        </div>
+
+        <div class="form-check mb-3">
+            <InputCheckbox @bind-Value="registration.Feest" class="form-check-input" />
+            <label class="form-check-label">Feest (21:00)</label>
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Plus één (naam partner):</label>
+            <InputText @bind-Value="registration.PlusEen" class="form-control" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Dieetwensen/allergieën:</label>
+            <InputTextArea @bind-Value="registration.Dieetwensen" class="form-control" rows="3" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Inschrijven</button>
+    </EditForm>
+}
+
+@code {
+    private Registration registration = new Registration();
+    private bool isSubmitted = false;
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            await ApiService.CreateRegistrationAsync(registration);
+            isSubmitted = true;
+        }
+        catch (Exception ex)
+        {
+            // Todo: error handling
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}

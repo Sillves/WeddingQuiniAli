@@ -1,0 +1,52 @@
+@page "/admin"
+@inject RegistrationApiService ApiService
+
+<h3>Inschrijvingen Overzicht</h3>
+
+@if (registrations == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Totaal: @registrations.Count inschrijvingen</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Naam</th>
+                <th>Email</th>
+                <th>Ceremonie</th>
+                <th>Receptie</th>
+                <th>Diner</th>
+                <th>Feest</th>
+                <th>Plus één</th>
+                <th>Dieet</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reg in registrations)
+            {
+                <tr>
+                    <td>@reg.Naam</td>
+                    <td>@reg.Email</td>
+                    <td>@(reg.Trouwceremonie ? "✓" : "")</td>
+                    <td>@(reg.Receptie ? "✓" : "")</td>
+                    <td>@(reg.Diner ? "✓" : "")</td>
+                    <td>@(reg.Feest ? "✓" : "")</td>
+                    <td>@reg.PlusEen</td>
+                    <td>@reg.Dieetwensen</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Registration> registrations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        registrations = await ApiService.GetAllRegistrationsAsync();
+    }
+}
