@@ -1,10 +1,10 @@
 
+using System.Net;
+using System.Text.Json;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.Cosmos;
-using System.Net;
-using System.Text.Json;
 using TrouwWebsiteAPI.Models;
 
 namespace TrouwWebsiteAPI
@@ -46,12 +46,12 @@ namespace TrouwWebsiteAPI
 
                 // Save to Cosmos DB
                 var result = await _container.CreateItemAsync(registration, new PartitionKey(registration.id));
-                
+
                 // Return success response
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "application/json");
                 await response.WriteStringAsync(JsonSerializer.Serialize(result.Resource));
-                
+
                 return response;
             }
             catch (Exception ex)
@@ -84,7 +84,7 @@ namespace TrouwWebsiteAPI
                 var httpResponse = req.CreateResponse(HttpStatusCode.OK);
                 httpResponse.Headers.Add("Content-Type", "application/json");
                 await httpResponse.WriteStringAsync(JsonSerializer.Serialize(results));
-                
+
                 return httpResponse;
             }
             catch (Exception ex)

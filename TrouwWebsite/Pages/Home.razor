@@ -1,7 +1,87 @@
 ﻿@page "/"
+@inject InviteCodeService CodeService
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-body text-center">
+                    <h1 class="display-4 mb-3">🍽️ Our Wedding Menu</h1>
+                    <p class="lead text-muted mb-4">Enter your invitation code to see your personalized menu</p>
 
-<h1>Hello, world!</h1>
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i> @errorMessage
+                        </div>
+                    }
 
-Welcome to your new app.
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="form-group mb-4">
+                                <label class="form-label fw-bold">Your Invitation Code:</label>
+                                <input @bind="enteredCode" @onkeypress="@HandleKeyPress"
+                                    class="form-control form-control-lg text-center text-uppercase fw-bold"
+                                    placeholder="ENTER CODE" maxlength="15"
+                                    style="font-size: 1.3em; letter-spacing: 4px; border: 2px solid #dee2e6;" />
+                            </div>
+
+                            <button @onclick="ValidateCode" class="btn btn-primary btn-lg px-5 py-3"
+                                disabled="@(isValidating || string.IsNullOrEmpty(enteredCode))">
+                                @if (isValidating)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                <i class="fas fa-utensils me-2"></i>
+                                Enter Restaurant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string enteredCode = "";
+    private string errorMessage = "";
+    private bool isValidating = false;
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !string.IsNullOrEmpty(enteredCode))
+        {
+            await ValidateCode();
+        }
+    }
+
+    private async Task ValidateCode()
+    {
+        isValidating = true;
+        errorMessage = "";
+
+        try
+        {
+            var inviteCode = await CodeService.ValidateCodeAsync(enteredCode.ToUpper());
+
+            if (inviteCode != null)
+            {
+                Navigation.NavigateTo($"/menu/{enteredCode.ToUpper()}");
+            }
+            else
+            {
+                errorMessage = "Code not found on today's menu. Please check your invitation card.";
+            }
+        }
+        catch
+        {
+            errorMessage = "Kitchen error occurred. Please try again.";
+        }
+        finally
+        {
+            isValidating = false;
+        }
+    }
+}

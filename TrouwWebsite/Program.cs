@@ -11,6 +11,7 @@ internal class Program
 
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
         builder.Services.AddScoped<RegistrationApiService>();
+        builder.Services.AddScoped<InviteCodeService>();
 
         await builder.Build().RunAsync();
     }

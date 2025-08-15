@@ -1,46 +1,101 @@
 @page "/admin"
+@page "/kitchen"
 @inject RegistrationApiService ApiService
 
-<h3>Inschrijvingen Overzicht</h3>
+<div class="container mt-4">
+    <h2><i class="fas fa-chef-hat"></i> Wedding Dashboard</h2>
 
-@if (registrations == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <p>Totaal: @registrations.Count inschrijvingen</p>
+    @if (registrations == null)
+    {
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading orders...</span>
+            </div>
+            <p>Loading today's orders...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Guests</h5>
+                        <h2 class="text-primary">@registrations.Count</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Dinner Service</h5>
+                        <h2 class="text-success">@registrations.Count(r => r.Diner)</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Evening Party</h5>
+                        <h2 class="text-info">@registrations.Count(r => r.Feest)</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Dietary Needs</h5>
+                        <h2 class="text-warning">@registrations.Count(r => !string.IsNullOrEmpty(r.Dieetwensen))</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Naam</th>
-                <th>Email</th>
-                <th>Ceremonie</th>
-                <th>Receptie</th>
-                <th>Diner</th>
-                <th>Feest</th>
-                <th>Plus één</th>
-                <th>Dieet</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var reg in registrations)
-            {
-                <tr>
-                    <td>@reg.Naam</td>
-                    <td>@reg.Email</td>
-                    <td>@(reg.Trouwceremonie ? "✓" : "")</td>
-                    <td>@(reg.Receptie ? "✓" : "")</td>
-                    <td>@(reg.Diner ? "✓" : "")</td>
-                    <td>@(reg.Feest ? "✓" : "")</td>
-                    <td>@reg.PlusEen</td>
-                    <td>@reg.Dieetwensen</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-clipboard-list"></i> All Reservations</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Ceremony</th>
+                                <th>Reception</th>
+                                <th>Dinner</th>
+                                <th>Party</th>
+                                <th>Plus One</th>
+                                <th>Dietary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var reg in registrations)
+                            {
+                                <tr>
+                                    <td><strong>@reg.Naam</strong></td>
+                                    <td>@reg.Email</td>
+                                    <td>@(reg.Trouwceremonie ? "🍾" : "❌")</td>
+                                    <td>@(reg.Receptie ? "🥂" : "❌")</td>
+                                    <td>@(reg.Diner ? "🍽️" : "❌")</td>
+                                    <td>@(reg.Feest ? "🎉" : "❌")</td>
+                                    <td>@reg.PlusEen</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(reg.Dieetwensen))
+                                        {
+                                            <span class="badge bg-warning">@reg.Dieetwensen</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
     private List<Registration> registrations;

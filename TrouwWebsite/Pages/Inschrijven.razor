@@ -1,72 +1,159 @@
-@page "/inschrijven"
-@using TrouwWebsite.Models
-@using TrouwWebsite.Services
+@page "/menu/{InviteCode}"
+@page "/inschrijven/{InviteCode}"
+@inject InviteCodeService CodeService
 @inject RegistrationApiService ApiService
 
-<h3>Inschrijving Trouw [Namen] - [Datum]</h3>
+<div class="container mt-4">
+    @if (codeInfo != null)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Code Info Header -->
+                <div class="card mb-4 border-@codeInfo.Theme">
+                    <div class="card-header bg-@codeInfo.Theme text-white text-center">
+                        <h3 class="mb-0">
+                            @codeInfo.Emoji @codeInfo.Name
+                        </h3>
+                        <p class="mb-0 opacity-75">@codeInfo.Description</p>
+                    </div>
+                </div>
 
-@if (isSubmitted)
-{
-    <div class="alert alert-success">
-        <h4>Bedankt voor je inschrijving!</h4>
-        <p>We hebben je aanmelding ontvangen.</p>
-    </div>
-}
-else
-{
-    <EditForm Model="@registration" OnValidSubmit="@HandleSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+                @if (isSubmitted)
+                {
+                    <div class="alert alert-success text-center">
+                        <h4><i class="fas fa-check-circle"></i> Order Confirmed!</h4>
+                        <p>Your reservation has been received. We'll see you at the restaurant!</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h4><i class="fas fa-clipboard-list"></i> Your Menu Selection</h4>
+                        </div>
+                        <div class="card-body">
+                            <EditForm Model="@registration" OnValidSubmit="@HandleSubmit">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary />
 
-        <div class="form-group mb-3">
-            <label>Naam:</label>
-            <InputText @bind-Value="registration.Naam" class="form-control" />
+                                <!-- Basic Info -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Name:</label>
+                                        <InputText @bind-Value="registration.Naam" class="form-control" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email (optional):</label>
+                                        <InputText @bind-Value="registration.Email" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- Menu Selection -->
+                                <h5><i class="fas fa-utensils"></i> Available Courses for @codeInfo.Name:</h5>
+
+                                <div class="row mb-3">
+                                    @if (codeInfo.AllowCeremonie)
+                                    {
+                                        <div class="col-md-6 mb-2">
+                                            <div class="form-check">
+                                                <InputCheckbox @bind-Value="registration.Trouwceremonie" class="form-check-input" />
+                                                <label class="form-check-label">
+                                                    <i class="fas fa-heart text-danger"></i> Ceremony Aperitif (14:00)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (codeInfo.AllowReceptie)
+                                    {
+                                        <div class="col-md-6 mb-2">
+                                            <div class="form-check">
+                                                <InputCheckbox @bind-Value="registration.Receptie" class="form-check-input" />
+                                                <label class="form-check-label">
+                                                    <i class="fas fa-wine-glass text-warning"></i> Reception Drinks (15:30)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (codeInfo.AllowDiner)
+                                    {
+                                        <div class="col-md-6 mb-2">
+                                            <div class="form-check">
+                                                <InputCheckbox @bind-Value="registration.Diner" class="form-check-input" />
+                                                <label class="form-check-label">
+                                                    <i class="fas fa-utensils text-success"></i> 3-Course Dinner (18:00)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (codeInfo.AllowFeest)
+                                    {
+                                        <div class="col-md-6 mb-2">
+                                            <div class="form-check">
+                                                <InputCheckbox @bind-Value="registration.Feest" class="form-check-input" />
+                                                <label class="form-check-label">
+                                                    <i class="fas fa-cocktail text-info"></i> Evening Party (21:00)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Plus One -->
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-user-plus"></i> Plus One (max @codeInfo.MaxGuests total):
+                                    </label>
+                                    <InputText @bind-Value="registration.PlusEen" class="form-control"
+                                        placeholder="Name of your dining companion" />
+                                </div>
+
+                                <!-- Dietary Requirements -->
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-leaf"></i> Dietary Requirements / Allergies:
+                                    </label>
+                                    <InputTextArea @bind-Value="registration.Dieetwensen" class="form-control" rows="3"
+                                        placeholder="Let our chef know about any dietary restrictions..." />
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-@codeInfo.Theme btn-lg px-5">
+                                        <i class="fas fa-check"></i> Confirm Reservation
+                                    </button>
+                                </div>
+                            </EditForm>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
-
-        <div class="form-group mb-3">
-            <label>Email:</label>
-            <InputText @bind-Value="registration.Email" class="form-control" />
+    }
+    else
+    {
+        <div class="alert alert-danger text-center">
+            <h4>Invalid Code</h4>
+            <p>This code is not on today's menu.</p>
+            <a href="/" class="btn btn-primary">Return to Menu</a>
         </div>
-
-        <h5>Waar ben je bij aanwezig?</h5>
-
-        <div class="form-check mb-2">
-            <InputCheckbox @bind-Value="registration.Trouwceremonie" class="form-check-input" />
-            <label class="form-check-label">Trouwceremonie (14:00)</label>
-        </div>
-
-        <div class="form-check mb-2">
-            <InputCheckbox @bind-Value="registration.Receptie" class="form-check-input" />
-            <label class="form-check-label">Receptie (15:30)</label>
-        </div>
-
-        <div class="form-check mb-2">
-            <InputCheckbox @bind-Value="registration.Diner" class="form-check-input" />
-            <label class="form-check-label">Diner (18:00)</label>
-        </div>
-
-        <div class="form-check mb-3">
-            <InputCheckbox @bind-Value="registration.Feest" class="form-check-input" />
-            <label class="form-check-label">Feest (21:00)</label>
-        </div>
-
-        <div class="form-group mb-3">
-            <label>Plus één (naam partner):</label>
-            <InputText @bind-Value="registration.PlusEen" class="form-control" />
-        </div>
-
-        <div class="form-group mb-3">
-            <label>Dieetwensen/allergieën:</label>
-            <InputTextArea @bind-Value="registration.Dieetwensen" class="form-control" rows="3" />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Inschrijven</button>
-    </EditForm>
-}
+    }
+</div>
 
 @code {
+    [Parameter] public string InviteCode { get; set; } = "";
+    private InviteCode? codeInfo;
     private Registration registration = new Registration();
     private bool isSubmitted = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(InviteCode))
+        {
+            codeInfo = await CodeService.ValidateCodeAsync(InviteCode);
+        }
+    }
 
     private async Task HandleSubmit()
     {
@@ -77,7 +164,7 @@ else
         }
         catch (Exception ex)
         {
-            // Todo: error handling
+            // Error handling
             Console.WriteLine($"Error: {ex.Message}");
         }
     }

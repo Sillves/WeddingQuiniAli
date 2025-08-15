@@ -1,8 +1,8 @@
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Azure.Cosmos;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddSingleton<CosmosClient>(serviceProvider => 
+builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 {
     var connectionString = Environment.GetEnvironmentVariable("CosmosDBConnection");
     return new CosmosClient(connectionString);
