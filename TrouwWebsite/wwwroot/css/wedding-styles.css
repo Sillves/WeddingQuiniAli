@@ -1,0 +1,302 @@
+/* Wedding Website - Quinten & Alison Theme */
+
+:root {
+    /* Color Palette from Invitation */
+    --bg-cream: #F5F3EF;
+    --text-dark: #2C2C2C;
+    --text-medium: #5A5A5A;
+    --accent-green: #7A9B8E;
+    --accent-pink: #D4A5A5;
+    --line-dark: #3A3A3A;
+    
+    /* Typography */
+    --font-script: 'Dancing Script', cursive;
+    --font-body: 'Montserrat', sans-serif;
+    --font-heading: 'Cormorant Garamond', serif;
+}
+
+/* Base Styles */
+body {
+    background-color: var(--bg-cream);
+    color: var(--text-dark);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.wedding-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: white;
+    box-shadow: 0 0 30px rgba(0,0,0,0.05);
+    min-height: 100vh;
+}
+
+/* Header with Names */
+.wedding-header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 2px solid var(--line-dark);
+    margin-bottom: 40px;
+}
+
+.wedding-names {
+    font-family: var(--font-script);
+    font-size: 3.5rem;
+    font-weight: 400;
+    margin: 0 0 20px 0;
+    color: var(--text-dark);
+}
+
+.wedding-date {
+    font-family: var(--font-body);
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin: 20px 0 0 0;
+}
+
+/* Section Styling */
+.wedding-section {
+    margin: 50px 0;
+    padding: 30px 0;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* Timeline Items */
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    margin: 30px 0;
+    padding: 20px 0;
+}
+
+.timeline-time {
+    font-size: 1.2rem;
+    font-weight: 600;
+    min-width: 100px;
+    text-align: right;
+    padding-right: 30px;
+}
+
+.timeline-content {
+    flex: 1;
+    border-left: 2px solid var(--accent-green);
+    padding-left: 30px;
+}
+
+.timeline-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.timeline-location {
+    color: var(--text-medium);
+    font-size: 0.95rem;
+}
+
+/* Form Styling */
+.wedding-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 30px;
+    background-color: var(--bg-cream);
+    border-radius: 8px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--accent-green);
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    background-color: white;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-pink);
+}
+
+/* Buttons */
+.btn-wedding {
+    background-color: var(--accent-green);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.btn-wedding:hover {
+    background-color: var(--accent-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.btn-wedding:disabled {
+    background-color: #CCC;
+    cursor: not-allowed;
+}
+
+/* Navigation */
+.nav-menu {
+    background-color: white;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.nav-link {
+    color: var(--text-dark) !important;
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    padding: 15px 20px !important;
+    transition: color 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--accent-green) !important;
+    background-color: transparent !important;
+}
+
+/* Divider Line */
+.divider {
+    width: 60%;
+    height: 2px;
+    background-color: var(--line-dark);
+    margin: 40px auto;
+}
+
+/* Botanical Decoration */
+.botanical-decoration {
+    text-align: center;
+    margin: 40px 0;
+    color: var(--accent-green);
+    font-size: 2rem;
+}
+
+/* Alert/Message Boxes */
+.alert-wedding {
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+    font-size: 0.95rem;
+}
+
+.alert-success {
+    background-color: #E8F5E9;
+    border-left: 4px solid var(--accent-green);
+    color: #2E7D32;
+}
+
+.alert-error {
+    background-color: #FFEBEE;
+    border-left: 4px solid #C62828;
+    color: #C62828;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .wedding-names {
+        font-size: 2.5rem;
+    }
+    
+    .wedding-date {
+        font-size: 1.2rem;
+    }
+    
+    .timeline-item {
+        flex-direction: column;
+    }
+    
+    .timeline-time {
+        text-align: left;
+        padding-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .timeline-content {
+        border-left: none;
+        padding-left: 0;
+    }
+    
+    .wedding-container {
+        padding: 20px 15px;
+    }
+}
+
+/* Loading Spinner */
+.spinner {
+    border: 3px solid var(--bg-cream);
+    border-top: 3px solid var(--accent-green);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+    accent-color: var(--accent-green);
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    accent-color: var(--accent-pink);
+}
+
+.attendance-option {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.attendance-option:hover {
+    background-color: rgba(122, 155, 142, 0.1);
+}

@@ -1,87 +1,398 @@
 ﻿@page "/"
-@inject InviteCodeService CodeService
-@inject NavigationManager Navigation
+@using TrouwWebsite.Models
+@using TrouwWebsite.Services
+@inject InviteCodeService InviteCodeService
+@inject RegistrationApiService RegistrationApiService
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-body text-center">
-                    <h1 class="display-4 mb-3">🍽️ Our Wedding Menu</h1>
-                    <p class="lead text-muted mb-4">Enter your invitation code to see your personalized menu</p>
+<div class="wedding-section">
+    <h2 class="section-title">@(codeValidated ? "Jouw Programma" : "Welkom")</h2>
 
-                    @if (!string.IsNullOrEmpty(errorMessage))
+    @if (codeValidated && currentInviteCode != null)
+    {
+        <!-- Burgerlijke Trouw -->
+        @if (currentInviteCode.AllowBurgerlijkeTrouw)
+        {
+            <div class="timeline-item">
+                <div class="timeline-time">11:00 AM</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">🏛️ Burgerlijke Trouw</div>
+                    <div class="timeline-location">Stadhuis, Grote Markt, Brussel</div>
+                </div>
+            </div>
+        }
+
+        <!-- Huwelijksceremonie -->
+        @if (currentInviteCode.AllowHuwelijksCeremonie)
+        {
+            <div class="timeline-item">
+                <div class="timeline-time">4:00 PM</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">💍 Huwelijksceremonie</div>
+                    <div class="timeline-location">Van der Valck, Mechelen</div>
+                </div>
+            </div>
+        }
+
+        <!-- Receptie -->
+        @if (currentInviteCode.AllowReceptie)
+        {
+            <div class="timeline-item">
+                <div class="timeline-time">@(currentInviteCode.AllowHuwelijksCeremonie ? "5:00 PM" : "4:30 PM")</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">🥂 Receptie</div>
+                    <div class="timeline-location">Van der Valck, Mechelen</div>
+                </div>
+            </div>
+        }
+
+        <!-- Diner -->
+        @if (currentInviteCode.AllowDiner)
+        {
+            <div class="timeline-item">
+                <div class="timeline-time">6:30 PM</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">🍽️ Diner</div>
+                    <div class="timeline-location">Van der Valck, Mechelen</div>
+                </div>
+            </div>
+        }
+
+        <!-- Bericht voor SWEETPARTY -->
+        @if (currentInviteCode.Code == "SWEETPARTY")
+        {
+            <div style="text-align: center; color: var(--text-medium); margin: 30px 0; font-style: italic;">
+                <p>✨ Na de Burgerlijke Trouw zie je elkaar terug bij het dessertenbuffet ✨</p>
+            </div>
+        }
+
+        <!-- Dessertenbuffet -->
+        @if (currentInviteCode.AllowDessertenbuffet)
+        {
+            <div class="timeline-item">
+                <div class="timeline-time">8:30 PM</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">🍰 Dessertenbuffet</div>
+                    <div class="timeline-location">Van der Valck, Mechelen</div>
+                </div>
+            </div>
+        }
+        
+        <!-- Avondfeest -->
+        @if (currentInviteCode.AllowAvondfeest)
+        {
+            <div class="timeline-item">
+                <div class="timeline-time">10:00 PM</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">🪩 Avondfeest</div>
+                    <div class="timeline-location">Van der Valck, Mechelen</div>
+                </div>
+            </div>
+        }
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px; background-color: var(--bg-cream); border-radius: 8px;">
+            <p style="color: var(--text-medium); font-size: 0.95rem; margin: 0;">
+                <strong>@currentInviteCode.Emoji @currentInviteCode.Name</strong> - @currentInviteCode.Description
+            </p>
+            <p style="color: var(--text-medium); font-size: 0.85rem; margin: 5px 0 0 0;">
+                Code: <strong>@currentInviteCode.Code</strong>
+            </p>
+        </div>
+    }
+</div>
+
+<div class="divider"></div>
+
+<div class="wedding-section">
+    <h2 class="section-title">@(codeValidated ? "Je Gegevens" : "Toegangscode")</h2>
+    
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert-wedding alert-error">
+            @errorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert-wedding alert-success">
+            @successMessage
+        </div>
+    }
+
+    @if (!codeValidated)
+    {
+        <div style="text-align: center; margin-bottom: 30px; color: var(--text-medium);">
+            <p>Voer eerst je toegangscode in om je persoonlijke programma en inschrijfformulier te zien.</p>
+        </div>
+
+        <div class="wedding-form">
+            <div class="form-group">
+                <label class="form-label" for="accessCode">Toegangscode</label>
+                <input 
+                    type="text" 
+                    id="accessCode"
+                    class="form-control" 
+                    @bind="accessCode" 
+                    placeholder="Bijv. FULLDAY"
+                    @bind:event="oninput"
+                    style="text-transform: uppercase;"
+                />
+                <small style="color: var(--text-medium); font-size: 0.85rem; margin-top: 5px; display: block;">
+                    Je hebt een unieke code ontvangen in je uitnodiging
+                </small>
+            </div>
+            <button class="btn-wedding" @onclick="ValidateCode" disabled="@isValidating">
+                @if (isValidating)
+                {
+                    <span>Valideren...</span>
+                }
+                else
+                {
+                    <span>Verder</span>
+                }
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="wedding-form">
+            <div class="form-group">
+                <label class="form-label" for="name">Naam</label>
+                <input type="text" id="name" class="form-control" @bind="registration.Naam" placeholder="Je volledige naam" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" id="email" class="form-control" @bind="registration.Email" placeholder="je@email.com" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="pluseen">Plus één (optioneel)</label>
+                <input type="text" id="pluseen" class="form-control" @bind="registration.PlusEen" placeholder="Naam van je +1" />
+                <small style="color: var(--text-medium); font-size: 0.85rem; margin-top: 5px; display: block;">
+                    Maximum @currentInviteCode.MaxGuests gast(en) met je code
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Ik/Wij zijn aanwezig bij:</label>
+                <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 4px; margin-top: 10px;">
+                    
+                    <!-- Burgerlijke Trouw -->
+                    @if (currentInviteCode.AllowBurgerlijkeTrouw)
                     {
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle"></i> @errorMessage
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; text-transform: none; letter-spacing: 0;">
+                                <input type="checkbox" @bind="registration.BurgerlijkeTrouw" style="margin-right: 10px; width: 18px; height: 18px;" />
+                                <span>🏛️ Burgerlijke Trouw (11:00 AM)</span>
+                            </label>
                         </div>
                     }
 
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <div class="form-group mb-4">
-                                <label class="form-label fw-bold">Your Invitation Code:</label>
-                                <input @bind="enteredCode" @onkeypress="@HandleKeyPress"
-                                    class="form-control form-control-lg text-center text-uppercase fw-bold"
-                                    placeholder="ENTER CODE" maxlength="15"
-                                    style="font-size: 1.3em; letter-spacing: 4px; border: 2px solid #dee2e6;" />
-                            </div>
-
-                            <button @onclick="ValidateCode" class="btn btn-primary btn-lg px-5 py-3"
-                                disabled="@(isValidating || string.IsNullOrEmpty(enteredCode))">
-                                @if (isValidating)
-                                {
-                                    <span class="spinner-border spinner-border-sm me-2"></span>
-                                }
-                                <i class="fas fa-utensils me-2"></i>
-                                Enter Restaurant
-                            </button>
+                    <!-- Huwelijksceremonie -->
+                    @if (currentInviteCode.AllowHuwelijksCeremonie)
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; text-transform: none; letter-spacing: 0;">
+                                <input type="checkbox" @bind="registration.Huwelijksceremonie" style="margin-right: 10px; width: 18px; height: 18px;" />
+                                <span>💍 Huwelijksceremonie (4:00 PM)</span>
+                            </label>
                         </div>
-                    </div>
+                    }
+
+                    <!-- Receptie -->
+                    @if (currentInviteCode.AllowReceptie)
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; text-transform: none; letter-spacing: 0;">
+                                <input type="checkbox" @bind="registration.Receptie" style="margin-right: 10px; width: 18px; height: 18px;" />
+                                <span>🥂 Receptie (@(currentInviteCode.AllowHuwelijksCeremonie ? "5:00" : "4:30") PM)</span>
+                            </label>
+                        </div>
+                    }
+                    
+                    <!-- Diner -->
+                    @if (currentInviteCode.AllowDiner)
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; text-transform: none; letter-spacing: 0;">
+                                <input type="checkbox" @bind="registration.Diner" style="margin-right: 10px; width: 18px; height: 18px;" />
+                                <span>🍽️ Diner (6:30 PM)</span>
+                            </label>
+                        </div>
+                    }
+                    
+                    <!-- Dessertenbuffet -->
+                    @if (currentInviteCode.AllowDessertenbuffet)
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; text-transform: none; letter-spacing: 0;">
+                                <input type="checkbox" @bind="registration.Dessertenbuffet" style="margin-right: 10px; width: 18px; height: 18px;" />
+                                <span>🍰 Dessertenbuffet (8:30 PM)</span>
+                            </label>
+                        </div>
+                    }
+
+                    <!-- Avondfeest -->
+                    @if (currentInviteCode.AllowAvondfeest)
+                    {
+                        <div>
+                            <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; text-transform: none; letter-spacing: 0;">
+                                <input type="checkbox" @bind="registration.Avondfeest" style="margin-right: 10px; width: 18px; height: 18px;" />
+                                <span>🪩 Avondfeest (10:00 PM)</span>
+                            </label>
+                        </div>
+                    }
                 </div>
+                <small style="color: var(--text-medium); font-size: 0.85rem; margin-top: 5px; display: block;">
+                    Vink aan voor welke onderdelen je kunt komen
+                </small>
             </div>
+
+            @if (currentInviteCode.AllowDiner && registration.Diner)
+            {
+                <div class="form-group">
+                    <label class="form-label" for="dietary">Dieetwensen</label>
+                    <textarea id="dietary" class="form-control" @bind="registration.Dieetwensen" rows="3" placeholder="Vegetarisch, allergieën, intoleranties, etc."></textarea>
+                    <small style="color: var(--text-medium); font-size: 0.85rem; margin-top: 5px; display: block;">
+                        Alleen invullen als je bij het diner aanwezig bent
+                    </small>
+                </div>
+            }
+
+            <button class="btn-wedding" @onclick="SubmitRegistration" disabled="@isSubmitting">
+                @if (isSubmitting)
+                {
+                    <span>Versturen...</span>
+                }
+                else
+                {
+                    <span>Bevestigen</span>
+                }
+            </button>
         </div>
-    </div>
+    }
 </div>
 
 @code {
-    private string enteredCode = "";
-    private string errorMessage = "";
+    private string accessCode = "";
+    private bool codeValidated = false;
     private bool isValidating = false;
-
-    private async Task HandleKeyPress(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter" && !string.IsNullOrEmpty(enteredCode))
-        {
-            await ValidateCode();
-        }
-    }
+    private bool isSubmitting = false;
+    private string errorMessage = "";
+    private string successMessage = "";
+    
+    private InviteCode? currentInviteCode = null;
+    private Registration registration = new Registration();
 
     private async Task ValidateCode()
     {
         isValidating = true;
         errorMessage = "";
-
+        
         try
         {
-            var inviteCode = await CodeService.ValidateCodeAsync(enteredCode.ToUpper());
-
-            if (inviteCode != null)
+            var upperCode = accessCode.ToUpper().Trim();
+            currentInviteCode = InviteCodeService.ValidateCode(upperCode);
+            
+            if (currentInviteCode != null)
             {
-                Navigation.NavigateTo($"/menu/{enteredCode.ToUpper()}");
+                codeValidated = true;
+                
+                // Set default attendance based on invite code permissions
+                registration.BurgerlijkeTrouw = currentInviteCode.AllowBurgerlijkeTrouw;
+                registration.Huwelijksceremonie = currentInviteCode.AllowHuwelijksCeremonie;
+                registration.Receptie = currentInviteCode.AllowReceptie;
+                registration.Diner = currentInviteCode.AllowDiner;
+                registration.Dessertenbuffet = currentInviteCode.AllowDessertenbuffet;
+                registration.Avondfeest = currentInviteCode.AllowAvondfeest;
             }
             else
             {
-                errorMessage = "Code not found on today's menu. Please check your invitation card.";
+                errorMessage = "Ongeldige code. Controleer je uitnodiging en probeer opnieuw.";
             }
         }
-        catch
+        catch (Exception ex)
         {
-            errorMessage = "Kitchen error occurred. Please try again.";
+            errorMessage = $"Er ging iets mis: {ex.Message}";
         }
         finally
         {
             isValidating = false;
+        }
+    }
+
+    private async Task SubmitRegistration()
+    {
+        isSubmitting = true;
+        errorMessage = "";
+        successMessage = "";
+        
+        try
+        {
+            // Validate
+            if (string.IsNullOrWhiteSpace(registration.Naam))
+            {
+                errorMessage = "Vul alsjeblieft je naam in.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(registration.Email))
+            {
+                errorMessage = "Vul alsjeblieft je email in.";
+                return;
+            }
+
+            // Check if at least one part is selected
+            if (!registration.BurgerlijkeTrouw && 
+                !registration.Huwelijksceremonie &&
+                !registration.Receptie && 
+                !registration.Diner && 
+                !registration.Dessertenbuffet &&
+                !registration.Avondfeest)
+            {
+                errorMessage = "Selecteer alsjeblieft minimaal één onderdeel waar je bij aanwezig bent.";
+                return;
+            }
+
+            // Submit via API service
+            var savedRegistration = await RegistrationApiService.CreateRegistrationAsync(registration);
+            
+            if (savedRegistration != null)
+            {
+                // Build attendance summary
+                var attendingParts = new List<string>();
+                if (savedRegistration.BurgerlijkeTrouw) attendingParts.Add("Burgerlijke Trouw");
+                if (savedRegistration.Huwelijksceremonie) attendingParts.Add("huwelijksceremonie");
+                if (savedRegistration.Receptie) attendingParts.Add("receptie");
+                if (savedRegistration.Diner) attendingParts.Add("diner");
+                if (savedRegistration.Dessertenbuffet) attendingParts.Add("dessertenbuffet");
+                if (savedRegistration.Avondfeest) attendingParts.Add("avondfeest");
+                
+                var attendingSummary = string.Join(", ", attendingParts);
+                
+                successMessage = $"🎉 Bedankt {savedRegistration.Naam}! Je inschrijving voor {attendingSummary} is ontvangen. We kijken ernaar uit jullie te zien!";
+                
+                // Reset form after delay
+                await Task.Delay(5000);
+                registration = new Registration();
+                codeValidated = false;
+                accessCode = "";
+                currentInviteCode = null;
+                successMessage = "";
+            }
+            else
+            {
+                errorMessage = "Er ging iets mis bij het opslaan. Probeer opnieuw.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Er ging iets mis: {ex.Message}";
+        }
+        finally
+        {
+            isSubmitting = false;
         }
     }
 }

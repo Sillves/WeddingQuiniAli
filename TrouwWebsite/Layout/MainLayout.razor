@@ -1,16 +1,57 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Montserrat:wght@300;400;500;600&family=Cormorant+Garamond:wght@300;400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="wedding-container">
+        <header class="wedding-header">
+            <h1 class="wedding-names">Quinten & Alison</h1>
+            <div class="divider"></div>
+            <p class="wedding-date">23 mei 2026</p>
+        </header>
+
+        @* <nav class="nav-menu">
+            <div class="nav flex-column">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="">
+                        Home
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="inschrijven">
+                        Inschrijven
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="admin">
+                        Kitchen Dashboard
+                    </NavLink>
+                </div>
+            </div>
+        </nav> *@
+
+        <main>
+            @Body
+        </main>
+
+        <div class="botanical-decoration">
+            🌿 ✨ 🌸
         </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+        <footer style="text-align: center; padding: 40px 20px; color: var(--text-medium); font-size: 0.9rem;">
+            <p>Dresscode: Superfancy</p>
+            <p>RSVP via deze website</p>
+        </footer>
+    </div>
+</body>
+
+</html>

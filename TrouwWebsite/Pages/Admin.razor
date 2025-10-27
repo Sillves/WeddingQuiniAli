@@ -1,107 +1,187 @@
 @page "/admin"
-@page "/kitchen"
-@inject RegistrationApiService ApiService
+@using TrouwWebsite.Models
+@using TrouwWebsite.Services
+@inject RegistrationApiService RegistrationApiService
 
-<div class="container mt-4">
-    <h2><i class="fas fa-chef-hat"></i> Wedding Dashboard</h2>
+<div class="wedding-section">
+    <h2 class="section-title">Kitchen Dashboard 👨‍🍳</h2>
 
-    @if (registrations == null)
+    @if (isLoading)
     {
-        <div class="text-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading orders...</span>
-            </div>
-            <p>Loading today's orders...</p>
+        <div style="text-align: center; padding: 40px;">
+            <div class="spinner"></div>
+            <p>Laden...</p>
+        </div>
+    }
+    else if (registrations == null || !registrations.Any())
+    {
+        <div style="text-align: center; padding: 40px; color: var(--text-medium);">
+            <p>Nog geen inschrijvingen</p>
         </div>
     }
     else
     {
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Guests</h5>
-                        <h2 class="text-primary">@registrations.Count</h2>
+        <div style="margin-bottom: 30px;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 20px;">
+                Totaal: @registrations.Count inschrijvingen
+            </h3>
+
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--accent-green);">
+                        @registrations.Count(r => r.BurgerlijkeTrouw)
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-medium);">
+                        🏛️ Burgerlijke Trouw
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Dinner Service</h5>
-                        <h2 class="text-success">@registrations.Count(r => r.Diner)</h2>
+
+                <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--accent-green);">
+                        @registrations.Count(r => r.Huwelijksceremonie)
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-medium);">
+                        💍 Huwelijksceremonie
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Evening Party</h5>
-                        <h2 class="text-info">@registrations.Count(r => r.Feest)</h2>
+
+                <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--accent-green);">
+                        @registrations.Count(r => r.Receptie)
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-medium);">
+                        🥂 Receptie
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Dietary Needs</h5>
-                        <h2 class="text-warning">@registrations.Count(r => !string.IsNullOrEmpty(r.Dieetwensen))</h2>
+
+                <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--accent-green);">
+                        @registrations.Count(r => r.Diner)
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-medium);">
+                        🍽️ Diner
+                    </div>
+                </div>
+
+                <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--accent-green);">
+                        @registrations.Count(r => r.Dessertenbuffet)
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-medium);">
+                        🍰 Dessertenbuffet
+                    </div>
+                </div>
+
+                <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--accent-green);">
+                        @registrations.Count(r => r.Avondfeest)
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-medium);">
+                        🪩 Avondfeest
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h4><i class="fas fa-clipboard-list"></i> All Reservations</h4>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Ceremony</th>
-                                <th>Reception</th>
-                                <th>Dinner</th>
-                                <th>Party</th>
-                                <th>Plus One</th>
-                                <th>Dietary</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var reg in registrations)
-                            {
-                                <tr>
-                                    <td><strong>@reg.Naam</strong></td>
-                                    <td>@reg.Email</td>
-                                    <td>@(reg.Trouwceremonie ? "🍾" : "❌")</td>
-                                    <td>@(reg.Receptie ? "🥂" : "❌")</td>
-                                    <td>@(reg.Diner ? "🍽️" : "❌")</td>
-                                    <td>@(reg.Feest ? "🎉" : "❌")</td>
-                                    <td>@reg.PlusEen</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(reg.Dieetwensen))
-                                        {
-                                            <span class="badge bg-warning">@reg.Dieetwensen</span>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+        <div class="divider"></div>
+
+        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin: 30px 0 20px 0;">
+            Alle Inschrijvingen
+        </h3>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; background: white;">
+                <thead>
+                    <tr style="background-color: var(--bg-cream); border-bottom: 2px solid var(--accent-green);">
+                        <th style="padding: 15px; text-align: left; font-weight: 600;">Naam</th>
+                        <th style="padding: 15px; text-align: left; font-weight: 600;">Email</th>
+                        <th style="padding: 15px; text-align: left; font-weight: 600;">+1</th>
+                        <th style="padding: 15px; text-align: center; font-weight: 600;">🏛️</th>
+                        <th style="padding: 15px; text-align: center; font-weight: 600;">💍</th>
+                        <th style="padding: 15px; text-align: center; font-weight: 600;">🥂</th>
+                        <th style="padding: 15px; text-align: center; font-weight: 600;">🍽️</th>
+                        <th style="padding: 15px; text-align: center; font-weight: 600;">🍰</th>
+                        <th style="padding: 15px; text-align: center; font-weight: 600;">🪩</th>
+                        <th style="padding: 15px; text-align: left; font-weight: 600;">Dieet</th>
+                        <th style="padding: 15px; text-align: left; font-weight: 600;">Datum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reg in registrations.OrderByDescending(r => r.InschrijfDatum))
+                    {
+                        <tr style="border-bottom: 1px solid #E5E5E5;">
+                            <td style="padding: 15px;">@reg.Naam</td>
+                            <td style="padding: 15px;">@reg.Email</td>
+                            <td style="padding: 15px;">@(string.IsNullOrEmpty(reg.PlusEen) ? "-" : reg.PlusEen)</td>
+                            <td style="padding: 15px; text-align: center;">@(reg.BurgerlijkeTrouw ? "✅" : "❌")</td>
+                            <td style="padding: 15px; text-align: center;">@(reg.Huwelijksceremonie ? "✅" : "❌")</td>
+                            <td style="padding: 15px; text-align: center;">@(reg.Receptie ? "✅" : "❌")</td>
+                            <td style="padding: 15px; text-align: center;">@(reg.Diner ? "✅" : "❌")</td>
+                            <td style="padding: 15px; text-align: center;">@(reg.Dessertenbuffet ? "✅" : "❌")</td>
+                            <td style="padding: 15px; text-align: center;">@(reg.Avondfeest ? "✅" : "❌")</td>
+                            <td
+                                style="padding: 15px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                @(string.IsNullOrEmpty(reg.Dieetwensen) ? "-" : reg.Dieetwensen)
+                            </td>
+                            <td style="padding: 15px; font-size: 0.85rem; color: var(--text-medium);">
+                                @reg.InschrijfDatum.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 20px;">
+                Dieetwensen Samenvatting
+            </h3>
+
+            @if (registrations.Any(r => !string.IsNullOrEmpty(r.Dieetwensen)))
+            {
+                <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 8px;">
+                    @foreach (var reg in registrations.Where(r => !string.IsNullOrEmpty(r.Dieetwensen)))
+                    {
+                        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #DDD;">
+                            <strong>@reg.Naam:</strong> @reg.Dieetwensen
+                        </div>
+                    }
                 </div>
-            </div>
+            }
+            else
+            {
+                <p style="color: var(--text-medium);">Geen speciale dieetwensen</p>
+            }
         </div>
     }
 </div>
 
 @code {
-    private List<Registration> registrations;
+    private List<Registration> registrations = new();
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        registrations = await ApiService.GetAllRegistrationsAsync();
+        await LoadRegistrations();
+    }
+
+    private async Task LoadRegistrations()
+    {
+        isLoading = true;
+        try
+        {
+            var result = await RegistrationApiService.GetAllRegistrationsAsync();
+            registrations = result ?? new List<Registration>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading registrations: {ex.Message}");
+            registrations = new List<Registration>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 }

@@ -1,0 +1,17 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "/assets/*",
+      "/css/*",
+      "/*.{css,js,json,ico,png,jpg,jpeg,gif,svg,woff,woff2,ttf,eot}"
+    ]
+  },
+  "globalHeaders": {
+    "cache-control": "no-cache, no-store, must-revalidate"
+  },
+  "mimeTypes": {
+    ".json": "application/json",
+    ".wasm": "application/wasm"
+  }
+}
