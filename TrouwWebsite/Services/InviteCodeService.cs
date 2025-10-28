@@ -14,8 +14,8 @@ namespace TrouwWebsite.Services
                 new InviteCode
                 {
                     Code = "JUSTITIEPALEIS",
-                    Name = "Full Day",
-                    Description = "Burgerlijke Trouw, huwelijksceremonie, receptie, diner, dessertenbuffet en avondfeest",
+                    Name = "Justitie paleis in Brussel dat jaren lang in de stelling heeft gestaan.",
+                    Description = "Volledige dag aanwezig zijn.",
                     Emoji = "🎊",
                     AllowBurgerlijkeTrouw = true,
                     AllowHuwelijksCeremonie = true,
@@ -30,8 +30,8 @@ namespace TrouwWebsite.Services
                 new InviteCode
                 {
                     Code = "KMSKA",
-                    Name = "No Church",
-                    Description = "Burgerlijke Trouw, receptie, diner, dessertenbuffet en avondfeest",
+                    Name = "Koninklijke Museum van Schone Kunsten Antwerpen",
+                    Description = "Quinten zijn eerste project.",
                     Emoji = "🥂",
                     AllowBurgerlijkeTrouw = true,
                     AllowHuwelijksCeremonie = false,
@@ -46,8 +46,8 @@ namespace TrouwWebsite.Services
                 new InviteCode
                 {
                     Code = "SINT KATELIJNEKERK",
-                    Name = "Sweet Party",
-                    Description = "Burgerlijke Trouw, dessertenbuffet en avondfeest",
+                    Name = "Kerk in Brussel.",
+                    Description = "",
                     Emoji = "🎉",
                     AllowBurgerlijkeTrouw = true,
                     AllowHuwelijksCeremonie = false,

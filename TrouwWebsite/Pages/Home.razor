@@ -13,7 +13,9 @@
         @if (currentInviteCode.AllowBurgerlijkeTrouw)
         {
             <div class="timeline-item">
-                <div class="timeline-time">11:00 AM</div>
+                <div class="timeline-time" style="display: flex; flex-direction: column; align-items: flex-start; min-width: 180px;">
+                    <div style="font-weight: 600;">11:00 AM</div>
+                </div>
                 <div class="timeline-content">
                     <div class="timeline-title">🏛️ Burgerlijke Trouw</div>
                     <div class="timeline-location">Stadhuis, Grote Markt, Brussel</div>
@@ -25,7 +27,9 @@
         @if (currentInviteCode.AllowHuwelijksCeremonie)
         {
             <div class="timeline-item">
-                <div class="timeline-time">4:00 PM</div>
+                <div class="timeline-time" style="display: flex; flex-direction: column; align-items: flex-start; min-width: 180px;">
+                    <div style="font-weight: 600;">4:00 PM</div>
+                </div>
                 <div class="timeline-content">
                     <div class="timeline-title">💍 Huwelijksceremonie</div>
                     <div class="timeline-location">Van der Valck, Mechelen</div>
@@ -37,7 +41,9 @@
         @if (currentInviteCode.AllowReceptie)
         {
             <div class="timeline-item">
-                <div class="timeline-time">@(currentInviteCode.AllowHuwelijksCeremonie ? "5:00 PM" : "4:30 PM")</div>
+                <div class="timeline-time" style="display: flex; flex-direction: column; align-items: flex-start; min-width: 180px;">
+                    <div style="font-weight: 600;">@(currentInviteCode.AllowHuwelijksCeremonie ? "5:00 PM" : "4:30 PM")</div>
+                </div>
                 <div class="timeline-content">
                     <div class="timeline-title">🥂 Receptie</div>
                     <div class="timeline-location">Van der Valck, Mechelen</div>
@@ -49,7 +55,9 @@
         @if (currentInviteCode.AllowDiner)
         {
             <div class="timeline-item">
-                <div class="timeline-time">6:30 PM</div>
+                <div class="timeline-time" style="display: flex; flex-direction: column; align-items: flex-start; min-width: 180px;">
+                    <div style="font-weight: 600;">6:30 PM</div>
+                </div>
                 <div class="timeline-content">
                     <div class="timeline-title">🍽️ Diner</div>
                     <div class="timeline-location">Van der Valck, Mechelen</div>
@@ -69,7 +77,9 @@
         @if (currentInviteCode.AllowDessertenbuffet)
         {
             <div class="timeline-item">
-                <div class="timeline-time">8:30 PM</div>
+                <div class="timeline-time" style="display: flex; flex-direction: column; align-items: flex-start; min-width: 180px;">
+                    <div style="font-weight: 600;">8:30 PM</div>
+                </div>
                 <div class="timeline-content">
                     <div class="timeline-title">🍰 Dessertenbuffet</div>
                     <div class="timeline-location">Van der Valck, Mechelen</div>
@@ -81,7 +91,10 @@
         @if (currentInviteCode.AllowAvondfeest)
         {
             <div class="timeline-item">
-                <div class="timeline-time">10:00 PM</div>
+                <div class="timeline-time" style="display: flex; flex-direction: column; align-items: flex-start; min-width: 180px;">
+                    <div style="font-weight: 600;">10:00 PM</div>
+                    <div style="font-size: 0.85rem; color: var(--text-medium); margin: 0; padding: 0;">Eindtijd: 2:00 AM</div>
+                </div>
                 <div class="timeline-content">
                     <div class="timeline-title">🪩 Avondfeest</div>
                     <div class="timeline-location">Van der Valck, Mechelen</div>
@@ -91,10 +104,7 @@
 
         <div style="text-align: center; margin-top: 40px; padding: 20px; background-color: var(--bg-cream); border-radius: 8px;">
             <p style="color: var(--text-medium); font-size: 0.95rem; margin: 0;">
-                <strong>@currentInviteCode.Emoji @currentInviteCode.Name</strong> - @currentInviteCode.Description
-            </p>
-            <p style="color: var(--text-medium); font-size: 0.85rem; margin: 5px 0 0 0;">
-                Code: <strong>@currentInviteCode.Code</strong>
+                Vul hieronder het formulier in om je aanwezigheid te bevestigen.
             </p>
         </div>
     }
@@ -133,7 +143,7 @@
                     id="accessCode"
                     class="form-control" 
                     @bind="accessCode" 
-                    placeholder="Bijv. FULLDAY"
+                    placeholder="Jouw unieke code"
                     @bind:event="oninput"
                     style="text-transform: uppercase;"
                 />
@@ -170,7 +180,11 @@
                 <label class="form-label" for="pluseen">Plus één (optioneel)</label>
                 <input type="text" id="pluseen" class="form-control" @bind="registration.PlusEen" placeholder="Naam van je +1" />
                 <small style="color: var(--text-medium); font-size: 0.85rem; margin-top: 5px; display: block;">
-                    Maximum @currentInviteCode.MaxGuests gast(en) met je code
+                    We kijken ernaar uit om ons feest samen met jullie te vieren! < br/>
+                    Op de uitnodiging staan de namen van de genodigden. < br/>
+                    We willen graag vragen om enkel voor deze personen te bevestigen. < br/>
+                    Bedankt voor jullie begrip!
+
                 </small>
             </div>
 
@@ -239,7 +253,7 @@
                         <div>
                             <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; text-transform: none; letter-spacing: 0;">
                                 <input type="checkbox" @bind="registration.Avondfeest" style="margin-right: 10px; width: 18px; height: 18px;" />
-                                <span>🪩 Avondfeest (10:00 PM)</span>
+                                <span>🪩 Avondfeest (10:00 PM - 2:00 AM)</span>
                             </label>
                         </div>
                     }
@@ -362,7 +376,7 @@
             {
                 // Build attendance summary
                 var attendingParts = new List<string>();
-                if (savedRegistration.BurgerlijkeTrouw) attendingParts.Add("Burgerlijke Trouw");
+                if (savedRegistration.BurgerlijkeTrouw) attendingParts.Add("burgerlijke trouw");
                 if (savedRegistration.Huwelijksceremonie) attendingParts.Add("huwelijksceremonie");
                 if (savedRegistration.Receptie) attendingParts.Add("receptie");
                 if (savedRegistration.Diner) attendingParts.Add("diner");
